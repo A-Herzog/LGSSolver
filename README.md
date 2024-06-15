@@ -16,7 +16,7 @@ You can also download the linear equation systems solver as an offline usable Wi
 
 ## License
 
-# Lineare Gleichungssysteme Löser / Linear equation systems solver is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+Lineare Gleichungssysteme Löser / Linear equation systems solver is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 This product bundles some components licensed under different open source licenses, see:
 
