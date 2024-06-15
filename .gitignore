@@ -1,0 +1,6 @@
+.vscode
+.tmp
+bin
+dist
+LGSSolver.exe
+desktop-app/2_Sign.bat

@@ -1,0 +1,64 @@
+.menuButtonTitleShort {
+  display: none;
+}
+
+@media only screen and (max-width: 550px) {
+  .menuButtonTitle {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .menuButtonTitleLong {
+    display: none;
+  }
+  .menuButtonTitleShort {
+    display: inline;
+  }
+}
+
+footer a {
+  color: blue;
+  text-decoration-color: blue;
+}
+
+[data-bs-theme="dark"] {
+  .bg-primary {
+    background-color: rgba(var(--bs-secondary-rgb),var(--bs-bg-opacity)) !important;
+  }
+
+  .bg-light {
+    background-color: rgba(var(--bs-secondary-rgb),var(--bs-bg-opacity)) !important;
+  }
+
+  footer a {
+    color: rgb(139, 185, 254)
+  }
+}
+
+#logoBox {
+  padding: 1px 10px 5px 10px;
+  border-radius: 2px;
+  background-color: white;
+}
+
+#languageButton {
+  color: white;
+}
+
+#languageButton:hover {
+  color: black;
+}
+
+footer {
+  margin-top: 20px;
+  padding-top: 10px;
+}
+
+main h3 {
+  font-size: 125%;
+}
+
+main h4 {
+  font-size: 115%;
+}
