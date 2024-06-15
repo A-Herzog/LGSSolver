@@ -10,9 +10,11 @@ To use the linear equation systems solver just go to
 
 ![Website status](https://img.shields.io/website?url=https%3A%2F%2Fa-herzog.github.io%2FLGSSolver%2F)
 
+<!--
 You can also download the linear equation systems solver as an offline usable Windows application:
 
 **[LGSSolver.exe](https://github.com/A-Herzog/QC/releases/latest/download/LGSSolver.exe)**
+-->
 
 ## License
 
