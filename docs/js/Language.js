@@ -48,6 +48,8 @@ lang.GUI.mainInfo="Sind in der Gleichung <b>A</b>x=<b>b</b> die Variablen <b>A</
 lang.GUI.rows="Zeilen";
 lang.GUI.col="Spalte";
 lang.GUI.cols="Spalten";
+lang.GUI.digitsSelect="Anzahl an auszugebenden Nachkommastellen";
+lang.GUI.digitsSelectAll="Alle";
 lang.GUI.example="Beispielwerte";
 lang.GUI.random="Zufallswerte";
 lang.GUI.resetMConfirm="Soll die Matrix wirklich mit 0-Werten gefüllt werden?";
@@ -130,6 +132,8 @@ lang.GUI.mainInfo="If the variable <b>A</b> is a matrix and <b>b</b> is a vector
 lang.GUI.rows="Rows";
 lang.GUI.col="Column";
 lang.GUI.cols="Columns";
+lang.GUI.digitsSelect="Number of digits to show";
+lang.GUI.digitsSelectAll="All";
 lang.GUI.example="Example values";
 lang.GUI.random="Random values";
 lang.GUI.resetMConfirm="Do you really want to fill the matrix with 0 values?";

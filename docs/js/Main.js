@@ -57,11 +57,11 @@ function initGUILanguage() {
   }
 
   /* Content */
+  let option;
   mainInfo.innerHTML=language.GUI.mainInfo;
   rowCountLabel.innerHTML=language.GUI.rows+":";
   colCountLabel.innerHTML=language.GUI.cols+":";
   for (let i=2;i<=10;i++) {
-    let option;
     rowCount.appendChild(option=document.createElement("option"));
     option.value=i;
     option.innerHTML=i;
@@ -73,6 +73,17 @@ function initGUILanguage() {
   }
   rowCount.onchange=()=>updateLGSTable();
   colCount.onchange=()=>updateLGSTable();
+  digitsSelectLabel.innerHTML=language.GUI.digitsSelect+":";
+  digitsSelect.appendChild(option=document.createElement("option"));
+  option.innerHTML="3";
+  option.selected=true;
+  option.value=3;
+  digitsSelect.appendChild(option=document.createElement("option"));
+  option.innerHTML="5";
+  option.value=5;
+  digitsSelect.appendChild(option=document.createElement("option"));
+  option.innerHTML=language.GUI.digitsSelectAll;
+  option.value=14;
   buttonResetM.onclick=()=>resetValues(0);
   buttonResetb.onclick=()=>resetValues(1);
   buttonExample.innerHTML=" "+language.GUI.example;
@@ -238,9 +249,10 @@ function solve() {
     return;
   }
   resultsArea.style.color="";
+  const digits=parseInt(digitsSelect.value);
 
   /* Solve LGS */
-  const solution=calcSolution(data[0],data[1]);
+  const solution=calcSolution(data[0],data[1],digits);
   resultsArea.innerHTML=solution;
 }
 

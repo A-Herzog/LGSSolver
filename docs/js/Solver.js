@@ -47,12 +47,22 @@ function checkLGS(htmlM, htmlb) {
 }
 
 /**
- * Rounds a number to 3 digits and converts it in a local string.
+ * Number of digits to be shown in round.
+ */
+let roundDigits=3;
+
+/**
+ * Rounds a number to roundDigits digits and converts it in a local string.
  * @param {Number} f Number to be convered to a string
  * @returns Number as local string
  */
 function round(f) {
-  const s=(Math.round(f*1000)/1000).toLocaleString();
+  let s;
+  s=f.toLocaleString(undefined, {minimumFractionDigits: roundDigits});
+  if (s.indexOf(".")>=0 || s.indexOf(",")>=0) {
+    while (s[s.length-1]=="0") s=s.substring(0,s.length-1);
+    if (s[s.length-1]=="." || s[s.length-1]==",") s=s.substring(0,s.length-1);
+  }
   return (s=='-0')?"0":s;
 }
 
@@ -381,9 +391,12 @@ function processSolution(dataA, dataB, colSwap, firstZeroRow) {
  * Solves a LGS.
  * @param {Array} dataA Matrix M
  * @param {Array} dataB Vector b
+ * @param {Number} digits Number of digits to display
  * @returns Solution as HTML code
  */
-function calcSolution(dataA,dataB) {
+function calcSolution(dataA, dataB, digits) {
+  roundDigits=Math.max(1,Math.min(14,digits));
+
   let result="";
   let colSwap=[];
   for (let i=0;i<dataA.length;i++) colSwap.push(i);
