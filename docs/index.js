@@ -28,6 +28,7 @@ import {language} from "./js/Language.js";
 import {initApp, isDesktopApp} from './js/Main.js';
 initApp();
 
+let downloadInfo="";
 if (isDesktopApp) {
   const footer=document.querySelector('footer');
   for (let link of footer.querySelectorAll("a")) if (link.href!='') {
@@ -40,5 +41,6 @@ if (isDesktopApp) {
 } else {
   const downloadA='<a id="downloadApp" target="_blank" href="https://github.com/A-Herzog/LGSSolver/releases/latest/download/LGSSolver.exe" style="display: none;"></a>';
   const downloadButton='<button class="btn btn-primary my-1 bi-windows" onclick="document.getElementById(\'downloadApp\').click();"> '+language.GUI.downloadButton+'</button>';
- infoArea.innerHTML=language.GUI.bookInfo //+"<h3>"+language.GUI.downloadTitle+"</h3><p>"+language.GUI.downloadLabel+"</p><p>"+downloadA+downloadButton+"</p>";
+ downloadInfo="<h3>"+language.GUI.downloadTitle+"</h3><p>"+language.GUI.downloadLabel+"</p><p>"+downloadA+downloadButton+"</p>";
 }
+infoArea.innerHTML=language.GUI.bookInfo+downloadInfo;

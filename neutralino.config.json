@@ -1,0 +1,49 @@
+{
+  "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
+  "applicationId": "LGSSolver",
+  "version": "2.0.0",
+  "defaultMode": "window",
+  "port": 0,
+  "documentRoot": "/docs/",
+  "url": "/",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "tokenSecurity": "one-time",
+  "logging": {
+    "enabled": false,
+    "writeToLogFile": false
+  },
+  "nativeAllowList": [
+    "app.*",
+    "os.*",
+	  "window.*",
+    "debug.log"
+  ],
+  "modes": {
+    "window": {
+      "title": "LGS Solver",
+      "width": 1440,
+      "height": 900,
+      "minWidth": 1024,
+      "minHeight": 768,
+      "center": true,
+      "fullScreen": false,
+      "alwaysOnTop": false,
+      "icon": "/docs/favicon.ico",
+      "enableInspector": false,
+      "borderless": false,
+      "maximize": false,
+      "hidden": false,
+      "resizable": true,
+      "exitProcessOnClose": false,
+      "useSavedState": false
+    }
+  },
+  "cli": {
+    "binaryName": "LGSSolver",
+    "resourcesPath": "/docs/",
+    "clientLibrary": "docs/libs/neutralino.js",
+    "binaryVersion": "5.0.0",
+    "clientVersion": "5.0.1"
+  }
+}
