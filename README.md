@@ -12,7 +12,7 @@ To use the linear equation systems solver just go to
 
 You can also download the linear equation systems solver as an offline usable Windows application:
 
-**[LGSSolver.exe](https://github.com/A-Herzog/QC/releases/latest/download/LGSSolver.exe)**
+**[LGSSolver.exe](https://github.com/A-Herzog/LGSSolver/releases/latest/download/LGSSolver.exe)**
 
 ## License
 
