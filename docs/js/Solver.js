@@ -395,7 +395,7 @@ function processSolution(dataA, dataB, colSwap, firstZeroRow) {
  * @returns Solution as HTML code
  */
 function calcSolution(dataA, dataB, digits) {
-  roundDigits=Math.max(1,Math.min(14,digits));
+  roundDigits=Math.max(1,Math.min(13,digits));
 
   let result="";
   let colSwap=[];
