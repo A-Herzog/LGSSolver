@@ -116,8 +116,15 @@ let LGSvaluesb=[];
  * @param {Object} input HTML input element
  */
 function checkInput(input) {
-  const ok=!isNaN(parseFloat(input.value.replaceAll(",",".")));
-  input.style.backgroundColor=ok?"":"red";
+  if (input) {
+    const ok=!isNaN(parseFloat(input.value.replaceAll(",",".")));
+    input.style.backgroundColor=ok?"":"red";
+  }
+
+  if (localStorage) {
+    localStorage.setItem("M",JSON.stringify(LGSvaluesM.map(row=>row.map(input=>input.value))));
+    localStorage.setItem("b",JSON.stringify(LGSvaluesb.map(input=>input.value)));
+  }
 }
 
 /**
@@ -137,6 +144,7 @@ function resetValues(mode) {
       LGSvaluesb.forEach(cell=>{cell.value="0"; cell.style.backgroundColor="";})
       break;
   }
+  checkInput();
 }
 
 /**
@@ -161,78 +169,119 @@ function setValues(mode) {
       for (let i=0;i<LGSvaluesb.length;i++) {LGSvaluesb[i].value=Math.floor(10*Math.random()); LGSvaluesb[i].style.backgroundColor="";}
       break;
   }
+  checkInput();
 }
 
 /**
  * Updates the LGS table after row or col count change.
  */
-function updateLGSTable() {
-    const newRowCount=parseInt(rowCount.value);
-    const newColCount=parseInt(colCount.value);
-
-    /* Read old values */
-    const oldLGSvaluesM=LGSvaluesM;
-    const oldLGSvaluesb=LGSvaluesb;
-
-    /* Build new table */
-    LGSArea.innerHTML="";
-    let table, tr, td;
-
-    LGSArea.appendChild(td=document.createElement("td"));
-    td.innerHTML="(";
-    td.style.fontSize=(newRowCount*100)+"%";
-
-    LGSvaluesM=[];
-    LGSArea.appendChild(table=document.createElement("table"));
-    for (let i=0;i<newRowCount;i++) {
-      const LGSvaluesMRow=[];
-      table.appendChild(tr=document.createElement("tr"));
-      for (let j=0;j<newColCount;j++) {
-        tr.appendChild(td=document.createElement("td"));
-        const input=document.createElement("input");
-        input.className="form-control";
-        input.style.fontSize="80%";
-        input.style.width="100px";
-        input.value=(oldLGSvaluesM.length>i && oldLGSvaluesM[i].length>j)?oldLGSvaluesM[i][j].value:"0";
-        input.oninput=()=>checkInput(input);
-        td.appendChild(input);
-        LGSvaluesMRow.push(input);
-        checkInput(input);
+function updateLGSTable(loadFromLocalStorage=false) {
+  /* Load from localStorage */
+  let loadM=null;
+  let loadB=null;
+  if (loadFromLocalStorage && localStorage) {
+    loadM=localStorage.getItem("M");
+    loadB=localStorage.getItem("b");
+    if (loadM==null || loadB==null) {
+      loadM=null;
+      loadB=null;
+    } else {
+      try {
+        loadM=JSON.parse(loadM);
+        loadB=JSON.parse(loadB);
+      } catch (err) {
+        loadM=null;
+        loadB=null;
       }
-      LGSvaluesM.push(LGSvaluesMRow);
     }
-
-    LGSArea.appendChild(td=document.createElement("td"));
-    td.innerHTML=")";
-    td.style.fontSize=(newRowCount*100)+"%";
-
-    LGSArea.appendChild(td=document.createElement("td"));
-    td.innerHTML="&middot;&nbsp;x&nbsp;=";
-    td.style.verticalAlign="middle";
-
-    LGSArea.appendChild(td=document.createElement("td"));
-    td.innerHTML="(";
-    td.style.fontSize=(newRowCount*100)+"%";
-
-    LGSvaluesb=[];
-    LGSArea.appendChild(table=document.createElement("table"));
-    for (let i=0;i<newRowCount;i++) {
-        table.appendChild(tr=document.createElement("tr"));
-        tr.appendChild(td=document.createElement("td"));
-        const input=document.createElement("input");
-        input.className="form-control";
-        input.style.fontSize="80%";
-        input.style.width="100px";
-        input.value=(oldLGSvaluesb.length>i)?oldLGSvaluesb[i].value:"0";
-        input.oninput=()=>checkInput(input);
-        td.appendChild(input);
-        LGSvaluesb.push(input);
-        checkInput(input);
+    if (loadM!=null && loadB!=null) {
+      rowCount.value=loadM.length;
+      colCount.value=loadM[0].length;
     }
+  }
 
-    LGSArea.appendChild(td=document.createElement("td"));
-    td.innerHTML=")";
-    td.style.fontSize=(newRowCount*100)+"%";
+  /* Get row and column count */
+  const newRowCount=parseInt(rowCount.value);
+  const newColCount=parseInt(colCount.value);
+
+  /* Read old values */
+  let oldLGSvaluesM;
+  let oldLGSvaluesb;
+  if (loadM!=null && loadB!=null) {
+    oldLGSvaluesb=loadB.map(value=>{
+      const input=document.createElement("input");
+      input.value=value;
+      return input;
+    });
+    oldLGSvaluesM=loadM.map(row=>row.map(value=>{
+      const input=document.createElement("input");
+      input.value=value;
+      return input;
+    }));
+  } else {
+    oldLGSvaluesM=LGSvaluesM;
+    oldLGSvaluesb=LGSvaluesb;
+  }
+
+  /* Build new table */
+  LGSArea.innerHTML="";
+  let table, tr, td;
+
+  LGSArea.appendChild(td=document.createElement("td"));
+  td.innerHTML="(";
+  td.style.fontSize=(newRowCount*100)+"%";
+
+  LGSvaluesM=[];
+  LGSArea.appendChild(table=document.createElement("table"));
+  for (let i=0;i<newRowCount;i++) {
+    const LGSvaluesMRow=[];
+    table.appendChild(tr=document.createElement("tr"));
+    for (let j=0;j<newColCount;j++) {
+      tr.appendChild(td=document.createElement("td"));
+      const input=document.createElement("input");
+      input.className="form-control";
+      input.style.fontSize="80%";
+      input.style.width="100px";
+      input.value=(oldLGSvaluesM.length>i && oldLGSvaluesM[i].length>j)?oldLGSvaluesM[i][j].value:"0";
+      input.oninput=()=>checkInput(input);
+      td.appendChild(input);
+      LGSvaluesMRow.push(input);
+      checkInput(input);
+    }
+    LGSvaluesM.push(LGSvaluesMRow);
+  }
+
+  LGSArea.appendChild(td=document.createElement("td"));
+  td.innerHTML=")";
+  td.style.fontSize=(newRowCount*100)+"%";
+
+  LGSArea.appendChild(td=document.createElement("td"));
+  td.innerHTML="&middot;&nbsp;x&nbsp;=";
+  td.style.verticalAlign="middle";
+
+  LGSArea.appendChild(td=document.createElement("td"));
+  td.innerHTML="(";
+  td.style.fontSize=(newRowCount*100)+"%";
+
+  LGSvaluesb=[];
+  LGSArea.appendChild(table=document.createElement("table"));
+  for (let i=0;i<newRowCount;i++) {
+      table.appendChild(tr=document.createElement("tr"));
+      tr.appendChild(td=document.createElement("td"));
+      const input=document.createElement("input");
+      input.className="form-control";
+      input.style.fontSize="80%";
+      input.style.width="100px";
+      input.value=(oldLGSvaluesb.length>i)?oldLGSvaluesb[i].value:"0";
+      input.oninput=()=>checkInput(input);
+      td.appendChild(input);
+      LGSvaluesb.push(input);
+      checkInput(input);
+  }
+
+  LGSArea.appendChild(td=document.createElement("td"));
+  td.innerHTML=")";
+  td.style.fontSize=(newRowCount*100)+"%";
 }
 
 /**
@@ -276,6 +325,6 @@ function startApp() {
    */
   function initApp() {
     initGUILanguage();
-    updateLGSTable();
+    updateLGSTable(true);
     startApp();
   }
