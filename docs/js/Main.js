@@ -92,6 +92,8 @@ function initGUILanguage() {
   buttonRandom.onclick=()=>setValues(1);
   buttonSolve.innerHTML=" "+language.GUI.solve;
   buttonSolve.onclick=()=>solve();
+  permalink.innerHTML=language.GUI.permalinkText;
+  permalink.title=language.GUI.permalinkInfo;
 
   if (document.documentElement.dataset.bsTheme=='dark') {
     LGSAreaOuter.className="";
@@ -125,6 +127,10 @@ function checkInput(input) {
     localStorage.setItem("M",JSON.stringify(LGSvaluesM.map(row=>row.map(input=>input.value))));
     localStorage.setItem("b",JSON.stringify(LGSvaluesb.map(input=>input.value)));
   }
+
+  const M=LGSvaluesM.map(row=>row.map(input=>encodeURIComponent(input.value.replaceAll(";",""))).join(";")).join(";;");
+  const b=LGSvaluesb.map(input=>encodeURIComponent(input.value.replaceAll(";",""))).join(";");
+  permalink.href=document.location.protocol+"//"+document.location.host+document.location.pathname+"?M="+M+"&b="+b;
 }
 
 /**
@@ -325,6 +331,23 @@ function startApp() {
    */
   function initApp() {
     initGUILanguage();
-    updateLGSTable(true);
+
+    let M=null;
+    let b=null;
+    const search=window.location.search;
+    if (search.startsWith("?")) for (let part of search.substring(1).split("&")) {
+      if (part.startsWith("M=")) M=part.substring(2).split(";;").map(row=>row.split(";").map(str=>decodeURIComponent(str)));
+      if (part.startsWith("b=")) b=part.substring(2).split(";").map(str=>decodeURIComponent(str));
+    }
+    if (M && b && M.length==b.length && M.length>0 && M[0].length>0) {
+      rowCount.value=M.length;
+      colCount.value=M[0].length;
+      updateLGSTable();
+      for (let i=0;i<M.length;i++) for (let j=0;j<Math.min(M[0].length,M[i].length);j++) LGSvaluesM[i][j].value=M[i][j];
+      for (let i=0;i<b.length;i++) LGSvaluesb[i].value=b[i];
+      updateLGSTable();
+    } else {
+      updateLGSTable(true);
+    }
     startApp();
   }
