@@ -16,6 +16,7 @@ limitations under the License.
 
 export {isDesktopApp, initApp};
 
+  import { Fraction } from "./Fraction.js";
 import {language} from "./Language.js";
 import {checkLGS, calcSolution} from "./Solver.js";
 
@@ -84,6 +85,9 @@ function initGUILanguage() {
   digitsSelect.appendChild(option=document.createElement("option"));
   option.innerHTML=language.GUI.digitsSelectAll;
   option.value=14;
+  digitsSelect.appendChild(option=document.createElement("option"));
+  option.innerHTML=language.GUI.digitsSelectFraction;
+  option.value=-1;
   buttonResetM.onclick=()=>resetValues(0);
   buttonResetb.onclick=()=>resetValues(1);
   buttonExample.innerHTML=" "+language.GUI.example;
@@ -135,7 +139,7 @@ function checkInput(input) {
 
 /**
  * Resets values to 0.
- * @param {Number} mode Object to reset (0=maxtrix; 1=vector)
+ * @param {Number} mode Object to reset (0=matrix; 1=vector)
  */
 function resetValues(mode) {
   const needConfirmA=LGSvaluesM.map(row=>row.map(cell=>cell.value.replaceAll(",",".")).map(val=>parseFloat(val)).map(val=>isNaN(val)?1:Math.abs(val)).reduce((a,b)=>a+b,0)).reduce((a,b)=>a+b,0)>0;
@@ -295,16 +299,23 @@ function updateLGSTable(loadFromLocalStorage=false) {
  */
 function solve() {
   resultsAreaOuter.style.display="";
+  let digits=parseInt(digitsSelect.value);
 
   /* Check input */
-  const data=checkLGS(LGSvaluesM,LGSvaluesb);
+  const data=checkLGS(LGSvaluesM,LGSvaluesb,digits<0);
   if (typeof(data)=="string") {
     resultsArea.innerHTML=data;
     resultsArea.style.color="red";
     return;
   }
   resultsArea.style.color="";
-  const digits=parseInt(digitsSelect.value);
+
+  /* Fraction mode? */
+  if (digits<0) {
+    digits=3;
+    for (let i=0;i<data[0].length;i++) for (let j=0;j<data[0][i].length;j++) data[0][i][j]=Fraction.fromNumber(data[0][i][j]);
+    for (let i=0;i<data[1].length;i++) data[1][i]=Fraction.fromNumber(data[1][i]);
+  }
 
   /* Solve LGS */
   const solution=calcSolution(data[0],data[1],digits);

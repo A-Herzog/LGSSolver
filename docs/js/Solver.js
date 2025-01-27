@@ -17,30 +17,62 @@ limitations under the License.
 export {checkLGS, calcSolution};
 
 import {language} from "./Language.js";
+import {Fraction} from "./Fraction.js";
+
+function getValue(htmlElement) {
+  const str=htmlElement.value.replaceAll(",",".");
+  const index=str.indexOf("/");
+  if (index>=0) {
+    const str1=str.substring(0,index);
+    const str2=str.substring(index+1);
+    const num1=parseFloat(str1);
+    const num2=parseFloat(str2);
+    if (isNaN(num1) || isNaN(num2)) return null;
+    if (num1%1!=0 || num2%1!=0) return null;
+    return new Fraction(num1,num2);
+  } else {
+    const num=parseFloat(str);
+    if (isNaN(num)) return null;
+    return num;
+  }
+}
 
 /**
  * Reads the values of M and b from the html input elements.
  * @param {Array} htmlM Matrix M in form of html input elements
  * @param {Array} htmlb Vector b in form of html input elements
+ * @param {Boolean} forceFractions Always use fraction mode? (Defaults to false.)
  * @returns Returns in case of success a two element array containing M and b, otherwise a string with an error message
  */
-function checkLGS(htmlM, htmlb) {
+function checkLGS(htmlM, htmlb, forceFractions=false) {
+  let hasFractions=forceFractions;
+
+  /* Build matrix M data */
   const M=[];
   for (let i=0;i<htmlM.length;i++) {
     const row=[];
     for (let j=0;j<htmlM[i].length;j++) {
-        const num=parseFloat(htmlM[i][j].value.replaceAll(",","."));
-        if (isNaN(num)) return language.GUI.errorM;
+        const num=getValue(htmlM[i][j]);
+        if (num===null) return language.GUI.errorM;
+        if (num instanceof Fraction) hasFractions=true;
         row.push(num);
     }
     M.push(row);
   }
 
+  /* Build vector b data */
   const b=[];
   for (let i=0;i<htmlb.length;i++) {
-    const num=parseFloat(htmlb[i].value.replaceAll(",","."));
-    if (isNaN(num)) return language.GUI.errorb;
+    const num=getValue(htmlb[i]);
+    if (num===null) return language.GUI.errorb;
+    if (num instanceof Fraction) hasFractions=true;
     b.push(num);
+  }
+
+  /* If there is a fraction we have to make fractions from all cells */
+  if (hasFractions) {
+    for (let i=0;i<M.length;i++) for (let j=0;j<M[i].length;j++) M[i][j]=Fraction.fromNumber(M[i][j]);
+    for (let i=0;i<b.length;i++) b[i]=Fraction.fromNumber(b[i]);
   }
 
   return [M,b];
@@ -53,12 +85,17 @@ let roundDigits=3;
 
 /**
  * Rounds a number to roundDigits digits and converts it in a local string.
- * @param {Number} f Number to be convered to a string
+ * @param {Number} f Number to be converted to a string
  * @returns Number as local string
  */
 function round(f) {
+  if (f instanceof Fraction) {
+    if (f.denominator==1) return round(f.numerator);
+    return round(f.numerator)+"/"+round(f.denominator);
+  }
+
   let s;
-  s=f.toLocaleString(undefined, {minimumFractionDigits: roundDigits});
+  s=f.toLocaleString(undefined, {minimumFractionDigits: roundDigits, useGrouping: false});
   if (s.indexOf(".")>=0 || s.indexOf(",")>=0) {
     while (s[s.length-1]=="0") s=s.substring(0,s.length-1);
     if (s[s.length-1]=="." || s[s.length-1]==",") s=s.substring(0,s.length-1);
@@ -90,7 +127,7 @@ function showLGS(dataA, dataB) {
  * @param {Array} dataA Matrix M
  * @param {Array} dataB Vector b
  * @param {Number} rowNr Row to be highlighted (0-based)
- * @param {Number} colNr Comumn to be highlighted (0-based)
+ * @param {Number} colNr Column to be highlighted (0-based)
  * @returns HTML code for Mx=b
  */
 function showLGSHighlightRow(dataA, dataB, rowNr, colNr) {
@@ -176,8 +213,15 @@ function swapCols(dataA, col1, col2, colSwap) {
   return [dataA,colSwap];
 }
 
-/* Führt einen Schritt hin zur Lösung durch, in dem in einer Spalte auf der Hauptdiagonalen eine 1 und sonst 0 erzeugt wird */
-function processColumn(dataA,dataB,colNr,colSwap) {
+/**
+ * Performs a step towards the solution by generating a 1 in a column on the main diagonal and 0 otherwise.
+ * @param {Array} dataA Matrix A
+ * @param {Array} dataB Vector b
+ * @param {Number} colNr  0-based number of the column to process
+ * @param {Array} colSwap Array for recording the column swaps
+ * @returns
+ */
+function processColumn(dataA, dataB, colNr, colSwap) {
   let result="<hr><h3>"+language.GUI.col+" "+(colNr+1)+"</h3>\n";
 
   result+="<h4>"+language.GUI.generationOf+" a<sub>"+(colNr+1)+","+(colNr+1)+"</sub>=1</h4>\n";
@@ -241,6 +285,86 @@ function processColumn(dataA,dataB,colNr,colSwap) {
     result+="<p>"+language.GUI.addRow1+" "+((f<0)?("("+round(f)+")"):round(f))+language.GUI.addRow2+" "+(colNr+1)+language.GUI.addRow3+" "+(j+1)+language.GUI.addRow4+".</p>\n";
     for (let k=colNr;k<dataA[j].length;k++) dataA[j][k]+=f*dataA[colNr][k];
     dataB[j]+=f*dataB[colNr];
+    result+=showLGSHighlightRow(dataA,dataB,j,colNr);
+  }
+  if (!changeNeeded) result+="<p>"+language.GUI.alreadyCase+"</p>\n";
+
+  return [dataA,dataB,true,result,colSwap];
+}
+
+/**
+ * Performs a step towards the solution by generating a 1 in a column on the main diagonal and 0 otherwise.
+ * This is the version for processing Fraction objects.
+ * @param {Array} dataA Matrix A
+ * @param {Array} dataB Vector b
+ * @param {Number} colNr  0-based number of the column to process
+ * @param {Array} colSwap Array for recording the column swaps
+ * @returns
+ */
+function processColumnFractionMode(dataA, dataB, colNr, colSwap) {
+  let result="<hr><h3>"+language.GUI.col+" "+(colNr+1)+"</h3>\n";
+
+  result+="<h4>"+language.GUI.generationOf+" a<sub>"+(colNr+1)+","+(colNr+1)+"</sub>=1</h4>\n";
+
+  /* Step 1: a(colNr,colNr)=1 */
+  if (dataA[colNr][colNr].is(1)) {
+    result+="<p>"+language.GUI.alreadyCase+"</p>\n";
+  } else {
+    /* Step 1a: Generate a(colNr,colNr)!=0 */
+    if (dataA[colNr][colNr].is(0)) {
+      let next=-1;
+      for (let j=colNr+1;j<dataA.length;j++) if (!dataA[j][colNr].is(0)) {next=j; break;}
+      if (next>=0) {
+        /* Swapping rows is sufficient */
+        result+="<p>"+language.GUI.swappingRows+" "+(colNr+1)+" "+language.GUI.and+" "+(next+1)+".</p>\n";
+        let arr=swapRows(dataA,dataB,colNr,next); dataA=arr[0]; dataB=arr[1];
+        result+=showLGS(dataA,dataB);
+      } else {
+        /* Swapping columns is sufficient */
+        for (let j=colNr+1;j<dataA[0].length;j++) if (!dataA[colNr][j].is(0)) {next=j; break;}
+        if (next>=0) {
+          result+="<p>"+language.GUI.swappingCols+" "+(colNr+1)+" "+language.GUI.and+" "+(next+1)+".</p>\n";
+          let arr=swapCols(dataA,colNr,next,colSwap); dataA=arr[0]; colSwap=arr[1];
+        } else {
+          /* Rows and columns have to be swapped */
+          let nextRow=-1, nextCol=-1;
+          for (let j=colNr+1;j<dataA.length;j++) for (let k=colNr+1;k<dataA[0].length;k++) if (!dataA[j][k].is(0)) {nextRow=j; nextCol=k; break;}
+          if (nextRow>=0) {
+            result+="<p>"+language.GUI.swappingRows+" "+(colNr+1)+" "+language.GUI.and+" "+(nextRow+1)+" "+language.GUI.swappingRowsCols+" "+(colNr+1)+" "+language.GUI.and+" "+(nextCol+1)+".</p>\n";
+            let arr=swapRows(dataA,dataB,colNr,nextRow); dataA=arr[0]; dataB=arr[1];
+            arr=swapCols(dataA,colNr,nextCol,colSwap); dataA=arr[0]; colSwap=arr[1];
+          result+=showLGS(dataA,dataB);
+          } else {
+            /* Nothing works */
+            result+="<p>"+language.GUI.notPossible+"</p>\n";
+            return [dataA,dataB,false,result,colSwap];
+          }
+        }
+      }
+    }
+
+    /* Step 1b: a(colNr,colNr)!=0, transform to =1 */
+    if (!dataA[colNr][colNr].is(1)) {
+      const f=dataA[colNr][colNr];
+      const m=(f.number<0)?"-":"";
+      const f2=f.abs;
+      let f3=(f2.inv.denominator!=1)?(m+f2.inv):(m+f2.inv.numerator);
+      result+="<p>"+language.GUI.multiplyRow1+" "+(colNr+1)+language.GUI.multiplyRow2+" "+f3+".<p>\n";
+      for (let j=0;j<dataA[colNr].length;j++) dataA[colNr][j]=dataA[colNr][j].div(f);
+      dataB[colNr]=dataB[colNr].div(f);
+      result+=showLGSHighlightRow(dataA,dataB,colNr,colNr);
+    }
+  }
+
+  /* Step 2: a(i,colNr)=0 for i!=colNr */
+  result+="<h4>"+language.GUI.generationOfZeros+" a<sub>i,"+(colNr+1)+"</sub> "+language.GUI.for+" i&ne;"+(colNr+1)+"</h4>\n";
+  let changeNeeded=false;
+  for (let j=0;j<dataA.length;j++) if (!dataA[j][colNr].is(0) && j!=colNr) {
+    changeNeeded=true;
+    const f=dataA[j][colNr].minus;
+    result+="<p>"+language.GUI.addRow1+" "+((f.numerator<0)?("("+round(f)+")"):round(f))+language.GUI.addRow2+" "+(colNr+1)+language.GUI.addRow3+" "+(j+1)+language.GUI.addRow4+".</p>\n";
+    for (let k=colNr;k<dataA[j].length;k++) dataA[j][k]=dataA[j][k].add(dataA[colNr][k].mul(f));
+    dataB[j]=dataB[j].add(dataB[colNr].mul(f));
     result+=showLGSHighlightRow(dataA,dataB,j,colNr);
   }
   if (!changeNeeded) result+="<p>"+language.GUI.alreadyCase+"</p>\n";
@@ -338,7 +462,7 @@ function processSolution(dataA, dataB, colSwap, firstZeroRow) {
 
   /* Info text: exactly one solution or infinite many solutions */
   if (firstZeroRow>=0) {
-    result+="<p>"+language.GUI.underdetermined1+" "+(dataA[0].length-firstZeroRow)+language.GUI.underdetermined2+".<br>";
+    result+="<p>"+language.GUI.underdetermined1+" "+(dataA[0].length-firstZeroRow)+language.GUI.underdetermined2+"<br>";
     result+="("+language.GUI.underdetermined3+" "+dataA[0].length+" "+language.GUI.underdetermined4+" "+firstZeroRow+" "+language.GUI.underdetermined5+")<br>";
     result+=language.GUI.underdetermined6;
     result+="</p>\n";
@@ -388,6 +512,106 @@ function processSolution(dataA, dataB, colSwap, firstZeroRow) {
 }
 
 /**
+ * Calculates the diagonal form (as far as possible) for the LGS.
+ * This is the version for processing Fraction objects.
+ * @param {Array} dataA Matrix A
+ * @param {Array} dataB Vector b
+ * @param {Array} colSwap List containing the swapped columns
+ * @param {Number} firstZeroRow Index of the first row consisting of zeros
+ * @returns HTML code for the solution
+ */
+function processSolutionFractionMode(dataA, dataB, colSwap, firstZeroRow) {
+  let result="";
+
+  result+="<hr><h3>"+language.GUI.solutionOfLGS+"</h3>\n";
+
+  /* Showing the LGS after the last transformation step with colors to show the different areas. */
+  let c1, c2, c3, c4;
+  if (document.documentElement.dataset.bsTheme=='dark') {
+    c1='#115';
+    c2='#151';
+    c3='#511';
+    c4='#555';
+  } else {
+    c1='#AAF';
+    c2='#AFA';
+    c3='#FBB';
+    c4='lightgray';
+  }
+  const colors=[];
+  for (let i=0;i<dataA.length;i++) {
+    const row=[];
+    for (let j=0;j<=dataA[0].length;j++) {
+      if (i<firstZeroRow || firstZeroRow<0) {
+        if (j==dataA[0].length) {row.push(c1); continue;}
+        if (firstZeroRow>=0 && j>=firstZeroRow) {row.push(c2); continue;}
+        row.push((i==j)?c3:"");
+      } else {
+        row.push((j<dataA[0].length || dataB[i].is(0))?c4:'red');
+      }
+    }
+    colors.push(row);
+  }
+  result+=showLGSCustomHighlight(dataA,dataB,colors);
+
+  /* No solution? */
+  if (firstZeroRow>=0) for (let i=firstZeroRow;i<dataA.length;i++) if (!dataB[i].is(0)) {
+    result+="<p> "+language.GUI.noSolution1+(i+1)+" "+language.GUI.noSolution2+": <span style=\"color: red;\">0="+round(dataB[i])+"</span>, "+language.GUI.noSolution3+".</p>\n";
+    return result;
+  }
+
+  /* Info text: exactly one solution or infinite many solutions */
+  if (firstZeroRow>=0) {
+    result+="<p>"+language.GUI.underdetermined1+" "+(dataA[0].length-firstZeroRow)+language.GUI.underdetermined2+"<br>";
+    result+="("+language.GUI.underdetermined3+" "+dataA[0].length+" "+language.GUI.underdetermined4+" "+firstZeroRow+" "+language.GUI.underdetermined5+")<br>";
+    result+=language.GUI.underdetermined6;
+    result+="</p>\n";
+  } else {
+    result+=language.GUI.oneSolution1;
+    result+=language.GUI.oneSolution2+"\n";
+  }
+
+  /* Generation of the solution set */
+  const L=[];
+  let lsg=[];
+  for (let i=0;i<Math.min(dataA[0].length,dataB.length);i++) lsg.push(dataB[i]);
+  for (let i=Math.min(dataA[0].length,dataB.length);i<dataA[0].length;i++) lsg.push(0);
+  L.push(lsg);
+  if (firstZeroRow>=0) for (let i=0;i<dataA[0].length-firstZeroRow;i++) {
+    lsg=[];
+    for (let j=0;j<firstZeroRow;j++) lsg.push(dataA[j][firstZeroRow+i].minus);
+    for (let j=firstZeroRow;j<dataA[0].length;j++) lsg.push((j-firstZeroRow==i)?1:0);
+    L.push(lsg);
+  }
+
+  /* Have columns been swapped? */
+  let swapped=false;
+  for (let i=0;i<colSwap.length;i++) if (colSwap[i]!=i) {swapped=true; break;}
+
+  /* Show the solution set (before the columns are reswapped) */
+  if (swapped) result+="<p>"+language.GUI.reswapBefore+":</p>\n";
+  if (!swapped) result+="<div style=\"border: 1px solid green; padding: 10px;\">\n";
+  result+=showL(L,swapped?"x*":"x",true,firstZeroRow);
+  if (!swapped) result+="</div>\n";
+
+  /* Reswapping and showing the final results */
+  if (swapped) {
+    result+="<p>"+language.GUI.reswap+":";
+    for (let i=0;i<colSwap.length;i++) result+=((i>0)?",":"")+" "+(i+1)+"&rarr;"+(colSwap[i]+1);
+    result+="</p>\n";
+    result+="<p>"+language.GUI.finalSolution+":</p>\n";
+    const newL=[];
+    for (let i=0;i<L.length;i++) {const lsg=[]; for (let j=0;j<L[i].length;j++) lsg.push(new Fraction(0,1)); newL.push(lsg);}
+    for (let i=0;i<colSwap.length;i++) for (let j=0;j<L.length;j++) newL[j][colSwap[i]]=L[j][i];
+    result+="<div style=\"border: 1px solid green; padding: 10px;\">\n";
+    result+=showL(newL,"x",false,firstZeroRow);
+    result+="</div>\n";
+  }
+
+  return result;
+}
+
+/**
  * Solves a LGS.
  * @param {Array} dataA Matrix M
  * @param {Array} dataB Vector b
@@ -396,6 +620,8 @@ function processSolution(dataA, dataB, colSwap, firstZeroRow) {
  */
 function calcSolution(dataA, dataB, digits) {
   roundDigits=Math.max(1,Math.min(13,digits));
+
+  const fractionMode=dataB[0] instanceof Fraction;
 
   let result="";
   let colSwap=[];
@@ -406,12 +632,12 @@ function calcSolution(dataA, dataB, digits) {
 
   let firstZeroRow=-1;
   for (let i=0;i<Math.min(dataA.length,dataA[0].length);i++) {
-    const arr=processColumn(dataA,dataB,i,colSwap);
+    const arr=fractionMode?processColumnFractionMode(dataA,dataB,i,colSwap):processColumn(dataA,dataB,i,colSwap);
     dataA=arr[0]; dataB=arr[1]; result+=arr[3]; colSwap=arr[4];
     if (!arr[2]) {firstZeroRow=i; break;}
   }
 
-  result+=processSolution(dataA,dataB,colSwap,firstZeroRow);
+  result+=fractionMode?processSolutionFractionMode(dataA,dataB,colSwap,firstZeroRow):processSolution(dataA,dataB,colSwap,firstZeroRow);
 
   return result;
 }
