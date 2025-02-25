@@ -88,6 +88,7 @@ function initGUILanguage() {
   digitsSelect.appendChild(option=document.createElement("option"));
   option.innerHTML=language.GUI.digitsSelectFraction;
   option.value=-1;
+  digitsSelect.onchange=()=>checkInput();
   buttonResetM.onclick=()=>resetValues(0);
   buttonResetb.onclick=()=>resetValues(1);
   buttonExample.innerHTML=" "+language.GUI.example;
@@ -130,11 +131,13 @@ function checkInput(input) {
   if (localStorage) {
     localStorage.setItem("M",JSON.stringify(LGSvaluesM.map(row=>row.map(input=>input.value))));
     localStorage.setItem("b",JSON.stringify(LGSvaluesb.map(input=>input.value)));
+    localStorage.setItem("digits",digitsSelect.value);
   }
 
   const M=LGSvaluesM.map(row=>row.map(input=>encodeURIComponent(input.value.replaceAll(";",""))).join(";")).join(";;");
   const b=LGSvaluesb.map(input=>encodeURIComponent(input.value.replaceAll(";",""))).join(";");
-  permalink.href=document.location.protocol+"//"+document.location.host+document.location.pathname+"?M="+M+"&b="+b;
+  const digits=digitsSelect.value;
+  permalink.href=document.location.protocol+"//"+document.location.host+document.location.pathname+"?M="+M+"&b="+b+"&digits="+digits;
 }
 
 /**
@@ -192,6 +195,7 @@ function updateLGSTable(loadFromLocalStorage=false) {
   if (loadFromLocalStorage && localStorage) {
     loadM=localStorage.getItem("M");
     loadB=localStorage.getItem("b");
+    const digits=parseInt(localStorage.getItem("digits"));
     if (loadM==null || loadB==null) {
       loadM=null;
       loadB=null;
@@ -207,6 +211,9 @@ function updateLGSTable(loadFromLocalStorage=false) {
     if (loadM!=null && loadB!=null) {
       rowCount.value=loadM.length;
       colCount.value=loadM[0].length;
+    }
+    if (!isNaN(digits)) {
+      digitsSelect.value=digits;
     }
   }
 
@@ -345,10 +352,12 @@ function startApp() {
 
     let M=null;
     let b=null;
+    let digits=null;
     const search=window.location.search;
     if (search.startsWith("?")) for (let part of search.substring(1).split("&")) {
       if (part.startsWith("M=")) M=part.substring(2).split(";;").map(row=>row.split(";").map(str=>decodeURIComponent(str)));
       if (part.startsWith("b=")) b=part.substring(2).split(";").map(str=>decodeURIComponent(str));
+      if (part.startsWith("digits=")) digits=part.substring(7).split(";").map(str=>decodeURIComponent(str));
     }
     if (M && b && M.length==b.length && M.length>0 && M[0].length>0) {
       rowCount.value=M.length;
@@ -359,6 +368,11 @@ function startApp() {
       updateLGSTable();
     } else {
       updateLGSTable(true);
+    }
+    if (digits) {
+      digits=parseInt(digits);
+      if (!isNaN(digits) && Array.from(digitsSelect.options).map(option=>parseInt(option.value)).indexOf(digits)>=0) digitsSelect.value=digits;
+      updateLGSTable();
     }
     startApp();
   }
