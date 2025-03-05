@@ -231,7 +231,7 @@ function processColumn(dataA, dataB, colNr, colSwap) {
     result+="<p>"+language.GUI.alreadyCase+"</p>\n";
   } else {
     /* Step 1a: Generate a(colNr,colNr)!=0 */
-    if (dataA[colNr][colNr]==0) {
+    if (Math.abs(dataA[colNr][colNr])<1E-14) {
       let next=-1;
       for (let j=colNr+1;j<dataA.length;j++) if (dataA[j][colNr]!=0) {next=j; break;}
       if (next>=0) {
