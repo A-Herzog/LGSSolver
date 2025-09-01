@@ -254,13 +254,20 @@ function updateLGSTable(loadFromLocalStorage=false) {
     const LGSvaluesMRow=[];
     table.appendChild(tr=document.createElement("tr"));
     for (let j=0;j<newColCount;j++) {
+      const id="inputM-"+i+"-"+j;
       tr.appendChild(td=document.createElement("td"));
+      const label=document.createElement("label");
+      label.className="visuallyhidden";
+      label.innerHTML="M("+(i+1)+";"+(j+1)+")";
+      label.htmlFor=id;
+      td.appendChild(label);
       const input=document.createElement("input");
       input.className="form-control";
       input.style.fontSize="80%";
       input.style.width="100px";
       input.value=(oldLGSvaluesM.length>i && oldLGSvaluesM[i].length>j)?oldLGSvaluesM[i][j].value:"0";
       input.oninput=()=>checkInput(input);
+      input.id=id;
       td.appendChild(input);
       LGSvaluesMRow.push(input);
       checkInput(input);
@@ -283,14 +290,21 @@ function updateLGSTable(loadFromLocalStorage=false) {
   LGSvaluesb=[];
   LGSArea.appendChild(table=document.createElement("table"));
   for (let i=0;i<newRowCount;i++) {
+      const id="inputB-"+i;
       table.appendChild(tr=document.createElement("tr"));
       tr.appendChild(td=document.createElement("td"));
+      const label=document.createElement("label");
+      label.className="visuallyhidden";
+      label.innerHTML="b("+(i+1)+")";
+      label.htmlFor=id;
+      td.appendChild(label);
       const input=document.createElement("input");
       input.className="form-control";
       input.style.fontSize="80%";
       input.style.width="100px";
       input.value=(oldLGSvaluesb.length>i)?oldLGSvaluesb[i].value:"0";
       input.oninput=()=>checkInput(input);
+      input.id=id;
       td.appendChild(input);
       LGSvaluesb.push(input);
       checkInput(input);
