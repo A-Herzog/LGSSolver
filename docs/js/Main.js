@@ -16,9 +16,14 @@ limitations under the License.
 
 export {isDesktopApp, initApp};
 
-  import { Fraction } from "./Fraction.js";
+import {Fraction} from "./Fraction.js";
 import {language} from "./Language.js";
 import {checkLGS, calcSolution} from "./Solver.js";
+
+/**
+ * LaTeX code for the current solution (for copy and save)
+ */
+let solutionLaTeXCode;
 
 /**
  * Is the system running as Neutralions desktop app (true) or as a web page (false)?
@@ -104,6 +109,15 @@ function initGUILanguage() {
     LGSAreaOuter.className="";
   }
 
+  latexButton.innerHTML=" "+language.GUI.latexCode;
+  latexButton.onclick=()=>{
+    latexArea.style.display=(latexArea.style.display=='none')?'':'none';
+  };
+  latexCopy.innerHTML=" "+language.GUI.latexCodeCopy;
+  latexCopy.onclick=()=>{navigator.clipboard.writeText(solutionLaTeXCode)};
+  latexSave.innerHTML=" "+language.GUI.latexCodeSave;
+  latexSave.onclick=()=>saveLaTeXCode();
+
   /* Footer */
   appName2.innerHTML=language.GUI.appName;
   linkImprint.innerHTML=language.GUI.imprint;
@@ -113,6 +127,30 @@ function initGUILanguage() {
   infoLocalDataOnly2.querySelector("h3").innerHTML=language.GUI.privacyInfo1;
   infoLocalDataOnly2.querySelector("div").innerHTML=language.GUI.privacyInfo2;
   infoSimulators.innerHTML=language.GUI.simulators;
+}
+
+/**
+ * Save LaTeX code of solution
+ */
+function saveLaTeXCode() {
+  if (isDesktopApp) {
+    Neutralino.os.showSaveDialog(language.GUI.latexCodeSaveTitle, {defaultPath: 'SolutionAsLaTeXCode.tex', filters: [
+      {name: language.GUI.latexCodeSaveFilter+' (*.tex)', extensions: ['tex']}
+    ]}).then(file=>{
+      file=file.trim();
+      if (file=='') return;
+      if (!file.toLocaleLowerCase().endsWith(".txt")) file+=".txt";
+      Neutralino.filesystem.writeFile(file,clipboardData);
+    });
+  } else {
+    const element=document.createElement('a');
+    element.setAttribute('href','data:text/plain;charset=utf-8,'+encodeURIComponent(solutionLaTeXCode));
+    element.setAttribute('download','SolutionAsLaTeXCode.tex');
+    element.style.display='none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
 }
 
 let LGSvaluesM=[];
@@ -340,7 +378,9 @@ function solve() {
 
   /* Solve LGS */
   const solution=calcSolution(data[0],data[1],digits);
-  resultsArea.innerHTML=solution;
+  resultsArea.innerHTML=solution.html;
+  latexPre.innerHTML=solution.latex;
+  solutionLaTeXCode=solution.latex;
 }
 
 /**

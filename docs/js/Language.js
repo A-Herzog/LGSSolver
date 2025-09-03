@@ -88,11 +88,18 @@ lang.GUI.underdetermined3="Das System besitzt";
 lang.GUI.underdetermined4="Variablen, aber nur";
 lang.GUI.underdetermined5="linear unabhängige Zeilen.";
 lang.GUI.underdetermined6="Der Lösungsraum wird aus einer Linearkombination der <span style=\"color: green;\">grün markierten</span> Spalten mit umgekehrten Vorzeichen, die um den Vektor der <span style=\"color: #AAF;\">rechte Seite</span> des Systems verschoben wird, gebildet.";
+lang.GUI.underdetermined6LaTeX="Der Lösungsraum wird aus einer Linearkombination der {\\color{green}grün markierten} Spalten mit umgekehrten Vorzeichen, die um den Vektor der {\\color{blue}rechte Seite} des Systems verschoben wird, gebildet.";
 lang.GUI.oneSolution1="<p>Das System besitzt genau eine Lösung.";
 lang.GUI.oneSolution2="<br>Die <span style=\"color: #AAF;\">rechte Seite</span> des Systems nach dem letzten Gauß-Schritt stellt den Lösungsvektor dar.</p>";
+lang.GUI.oneSolutionLaTeX="Das System besitzt genau eine Lösung.\\hfill\\\\ Die {\\color{blue}rechte Seite} des Systems nach dem letzten Gauß-Schritt stellt den Lösungsvektor dar.";
 lang.GUI.reswapBefore="Vor der Rücksortierung der Spalten";
 lang.GUI.reswap="Rücksortierung der Spalten";
 lang.GUI.finalSolution="Finale Lösung des Systems";
+lang.GUI.latexCode="LaTeX-Code";
+lang.GUI.latexCodeCopy="Kopieren";
+lang.GUI.latexCodeSave="Speichern";
+lang.GUI.latexCodeSaveTitle="LaTeX-Code speichern";
+lang.GUI.latexCodeSaveFilter="LaTeX-Dateien";
 lang.GUI.bookInfo=`
 <h3>Weiterführende Literatur</h3>
 <p>
@@ -177,11 +184,18 @@ lang.GUI.underdetermined3="The system has";
 lang.GUI.underdetermined4="variables, but only";
 lang.GUI.underdetermined5="linearly independent rows.";
 lang.GUI.underdetermined6="The solution space is calculated from a linear combination of the columns <span style=\"color: green;\">marked in green</span> with switched signs, which is shifted by the vector of the <span style=\"color: #AAF;\">right side</span>.";
+lang.GUI.underdetermined6LaTeX="The solution space is calculated from a linear combination of the columns {\\color{green}marked in green} with switched signs, which is shifted by the vector of the {\\color{blue}right side}.";
 lang.GUI.oneSolution1="<p>The system has exactly one solution.";
 lang.GUI.oneSolution2="<br>The <span style=\"color: #AAF;\">right side</span> of the system after the last Gauß step is the solution vector.</p>";
+lang.GUI.oneSolutionLaTeX="The system has exactly one solution.\\hfill\\\\ The {\\color{blue}right side} of the system after the last Gauß step is the solution vector.";
 lang.GUI.reswapBefore="Before sorting back the columns";
 lang.GUI.reswap="Sorting back the columns";
 lang.GUI.finalSolution="Final solution of the system";
+lang.GUI.latexCode="LaTeX code";
+lang.GUI.latexCodeCopy="Copy";
+lang.GUI.latexCodeSave="Save";
+lang.GUI.latexCodeSaveTitle="Save LaTeX code";
+lang.GUI.latexCodeSaveFilter="LaTeX files";
 lang.GUI.bookInfo="";
 
 /* Activate language */

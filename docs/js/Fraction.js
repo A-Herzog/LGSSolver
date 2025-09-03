@@ -201,6 +201,19 @@ class Fraction {
     if (this.#denominator==1) this.#numerator.toString();
     return this.#numerator.toString()+"/"+this.#denominator.toString();
   }
+
+  /**
+   * Returns the fraction as a LaTeX string.
+   * @returns Fraction as LaTeX string (without $...$)
+   */
+  toLaTeX() {
+    if (this.#denominator==1) this.#numerator.toString();
+    if (this.#numerator<0) {
+      return "-\\frac{"+(-this.#numerator).toString()+"}{"+this.#denominator.toString()+"}";
+    } else {
+      return "\\frac{"+this.#numerator.toString()+"}{"+this.#denominator.toString()+"}";
+    }
+  }
 }
 
 /**
