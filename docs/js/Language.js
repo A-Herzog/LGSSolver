@@ -46,7 +46,7 @@ lang.GUI.downloadButton="Download";
 lang.GUI.downloadButtonExe="Windows-Anwendung (exe)";
 lang.GUI.downloadButtonZip="Linux und MacOS-Anwendung (zip)";
 lang.GUI.solutionOfLGS="Lösung des linearen Gleichungssystems";
-lang.GUI.mainInfo="Sind in der Gleichung <b>A</b>x=<b>b</b> die Variablen <b>A</b> eine Matrix und <b>b</b> ein Vektor, so spricht man von einem linearen Gleichungssystem. Diese Webapp kann lineare Gleichungssysteme mit Hilfe des Gauß-Algorithmus auflösen.";
+lang.GUI.mainInfo="Sind in der Gleichung <b>A</b>&middot;<b>x</b>=<b>b</b> die Variablen <b>A</b> eine Matrix und <b>b</b> ein Vektor, so spricht man von einem linearen Gleichungssystem. Diese Webapp kann lineare Gleichungssysteme mit Hilfe des Gauß-Algorithmus auflösen.";
 lang.GUI.rows="Zeilen";
 lang.GUI.col="Spalte";
 lang.GUI.cols="Spalten";
@@ -104,7 +104,7 @@ lang.GUI.bookInfo=`
 <h3>Weiterführende Literatur</h3>
 <p>
 <a href="https://link.springer.com/book/10.1007/978-3-658-36742-8" target="_blank">
-<img src="./images/BrueckenkursCover.webp" style="float: left; margin-right: 10px; max-height: 175px;" alt="Brückenkurs Mathematik für Wirtschaftswissenschaftler" title="Brückenkurs Mathematik für Wirtschaftswissenschaftler">
+<img src="./images/BrueckenkursCover.webp" width="116" height="175" style="float: left; margin-right: 10px; max-height: 175px;" alt="Brückenkurs Mathematik für Wirtschaftswissenschaftler" title="Brückenkurs Mathematik für Wirtschaftswissenschaftler">
 </a>
 Als weiterführende Literatur zum Thema der linearen Gleichungssysteme wird empfohlen:<br>
 <a href="https://link.springer.com/book/10.1007/978-3-658-36742-8" target="_blank">W. Purkert, A. Herzog: <b>Brückenkurs Mathematik für Wirtschaftswissenschaftler</b>, 9. Auflage, Springer, 2022.</a><br>
@@ -142,7 +142,7 @@ lang.GUI.downloadButton="Download";
 lang.GUI.downloadButtonExe="Windows application (exe)";
 lang.GUI.downloadButtonZip="Linux and macOS application (zip)";
 lang.GUI.solutionOfLGS="Solution of the linear equation system";
-lang.GUI.mainInfo="If the variable <b>A</b> is a matrix and <b>b</b> is a vector in the equation <b>A</b>x=<b>b</b>, this is referred to as a system of linear equations. This web app can solve systems of linear equations using the Gaussian algorithm.";
+lang.GUI.mainInfo="If the variable <b>A</b> is a matrix and <b>b</b> is a vector in the equation <b>A</b>&middot;<b>x</b>=<b>b</b>, this is referred to as a system of linear equations. This web app can solve systems of linear equations using the Gaussian algorithm.";
 lang.GUI.rows="Rows";
 lang.GUI.col="Column";
 lang.GUI.cols="Columns";

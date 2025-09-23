@@ -31,7 +31,12 @@ footer a {
     background-color: rgba(var(--bs-secondary-rgb),var(--bs-bg-opacity)) !important;
   }
 
-  footer a {
+footer {
+  margin-top: 20px;
+  padding-top: 10px;
+}
+
+footer a {
     color: rgb(139, 185, 254)
   }
 }
@@ -72,4 +77,41 @@ main h4 {
   padding: 0;
   position: absolute;
   width: 1px;
+}
+
+#colorDropdown {
+  display: inline-block;
+}
+
+#rowCountLabel {
+  margin-right: 10px;
+}
+
+#rowCount, #colCount {
+  display: inline;
+  width: 75px;
+}
+
+#colCountLabel {
+  margin-left: 20px;
+  margin-right: 10px;
+}
+
+#digitsSelectLabel {
+  margin-right: 10px;
+}
+
+#digitsSelect {
+  display: inline;
+  width: 180px;
+}
+
+#LGSAreaOuterBox {
+  overflow-x: scroll;
+}
+
+#latexPre {
+  border: 1px solid green;
+  padding: 5px;
+  background-color: #F7F7F7;
 }
