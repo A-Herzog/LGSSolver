@@ -48,6 +48,9 @@ function start() {
     ];
     downloadInfo+="<p class='mt-3'>"+language.GUI.downloadLabel+"</p><p><div class='dropdown'>"+downloadButton+"<ul class='dropdown-menu'><li>"+downloadOptions.join("</li><li>")+"</li></ul>"+"</div></p>";
   }
+  if (language.code=="de") {
+    downloadInfo+="<p class='mt-3'>"+language.GUI.downloadAlgorithmLabel+"</p><p><button class='btn btn-primary my-1 bi-file-earmark-pdf' type='button' onclick=\"window.open('info/LGS-Algorithmus.pdf','_blank')\">&nbsp;"+language.GUI.downloadAlgorithmButton+"</button></p>";
+  }
   infoArea.innerHTML=language.GUI.bookInfo+downloadInfo;
 }
 

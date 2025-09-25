@@ -23,6 +23,7 @@ let lang;
 const languageDE={};
 lang=languageDE;
 
+lang.code="de";
 lang.GUI={};
 lang.GUI.appName="Lineare Gleichungssysteme Löser";
 lang.GUI.homeURL="warteschlangensimulation.de";
@@ -42,6 +43,8 @@ lang.GUI.tabColorModeDark="Dunkel";
 lang.GUI.tabColorModeSystemDefault="Systemvorgabe";
 lang.GUI.downloadTitle="Download";
 lang.GUI.downloadLabel="Diese Webapp steht auch als offline-nutzbare Anwendung zur Verfügung:";
+lang.GUI.downloadAlgorithmLabel="Außerdem steht der Algorithmus zum Lösen von linearen Gleichungssystemen als PDF-Dokument zur Verfügung:";
+lang.GUI.downloadAlgorithmButton="Algorithmus als PDF herunterladen";
 lang.GUI.downloadButton="Download";
 lang.GUI.downloadButtonExe="Windows-Anwendung (exe)";
 lang.GUI.downloadButtonZip="Linux und MacOS-Anwendung (zip)";
@@ -119,6 +122,7 @@ DOI: <a href="https://doi.org/10.1007/978-3-658-36742-8" target="_blank">https:/
 const languageEN={};
 lang=languageEN;
 
+lang.code="en";
 lang.GUI={};
 lang.GUI.appName="Linear equation system solver";
 lang.GUI.homeURL="queueingsimulation.de";
@@ -138,6 +142,8 @@ lang.GUI.tabColorModeDark="Dark";
 lang.GUI.tabColorModeSystemDefault="System default";
 lang.GUI.downloadTitle="Download";
 lang.GUI.downloadLabel="This webapp is also available as an offline usable application:";
+lang.GUI.downloadAlgorithmLabel="Furthermore, the algorithm for solving linear equation systems is available as a PDF document:";
+lang.GUI.downloadAlgorithmButton="Download algorithm as PDF";
 lang.GUI.downloadButton="Download";
 lang.GUI.downloadButtonExe="Windows application (exe)";
 lang.GUI.downloadButtonZip="Linux and macOS application (zip)";
