@@ -466,7 +466,7 @@ function processColumnFractionMode(dataA, dataB, colNr, colSwap) {
       const m=(f.number<0)?"-":"";
       const f2=f.abs;
       const f3=(f2.inv.denominator!=1)?(m+f2.inv):(m+f2.inv.numerator);
-      const f4=(f2.inv.denominator!=1)?(m+f2.inv.toLaTeX()):(m+f2.inv.numerator.toLaTeX());
+      const f4=(f2.inv.denominator!=1)?(m+latex(f2.inv,false)):(m+latex(f2.inv.numerator,false));
       resultHTML+="<p>"+language.GUI.multiplyRow1+" "+(colNr+1)+language.GUI.multiplyRow2+" "+f3+".<p>\n";
       resultLaTeX+=language.GUI.multiplyRow1+" "+(colNr+1)+language.GUI.multiplyRow2+" $"+f4+"$.\n\n";
       for (let j=0;j<dataA[colNr].length;j++) dataA[colNr][j]=dataA[colNr][j].div(f);
