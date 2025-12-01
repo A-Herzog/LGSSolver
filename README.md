@@ -2,6 +2,8 @@
 
 Linear equation systems solver is a web service for solving linear equation systems using the Gauß algorithm.
 
+[![Screenshot of the input area of the LGS solver](ScreenshotLGSSolver.png)](https://a-herzog.github.io/LGSSolver)
+
 ## Usage
 
 To use the linear equation systems solver just go to
